@@ -52,6 +52,13 @@ Create a complete ${mealType} recipe that serves exactly ${servings} people and 
 Ingredients available:
 ${ingredients}
 
+IMPORTANT:
+- You do NOT need to use every listed ingredient
+- Omit any ingredient that does not logically or flavor-wise belong
+- Prioritize a cohesive, well-balanced dish over ingredient completeness
+- If an ingredient is omitted, briefly explain why
+
+
 Dietary restrictions:
 ${dietaryRestrictions || "None"}
 
