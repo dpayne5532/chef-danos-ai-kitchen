@@ -18,7 +18,11 @@
       --radius: 14px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
 
     body {
       margin: 0;
@@ -32,12 +36,21 @@
       text-align: center;
     }
 
+    .logo {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 16px;
+      display: block;
+    }
+
     header h1 {
       margin: 0;
       font-size: 2.4rem;
     }
 
-    header span { color: var(--accent); }
+    header span {
+      color: var(--accent);
+    }
 
     header p {
       margin-top: 10px;
@@ -111,6 +124,10 @@
       box-shadow: 0 10px 25px var(--accent-soft);
     }
 
+    button:hover {
+      transform: translateY(-1px);
+    }
+
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -124,7 +141,7 @@
       max-height: 75vh;
       overflow-y: auto;
       line-height: 1.6;
-      transition: opacity 0.2s ease;
+      white-space: normal;
     }
 
     .markdown h1,
@@ -134,9 +151,21 @@
       margin-top: 1.2em;
     }
 
-    .markdown ul { padding-left: 20px; }
-    .markdown li { margin: 0.4em 0; }
-    .markdown strong { color: #fff; }
+    .markdown p {
+      margin: 0.6em 0;
+    }
+
+    .markdown ul {
+      padding-left: 20px;
+    }
+
+    .markdown li {
+      margin: 0.4em 0;
+    }
+
+    .markdown strong {
+      color: #ffffff;
+    }
 
     .loader {
       width: 48px;
@@ -148,7 +177,9 @@
       margin: 0 auto;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     footer {
       text-align: center;
@@ -158,141 +189,143 @@
     }
 
     @media (max-width: 900px) {
-      main { grid-template-columns: 1fr; }
+      main {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <h1>Chef <span>Dano’s</span> AI Kitchen</h1>
-  <p>Your private, no cloud, AI powered recipe laboratory</p>
-</header>
+  <header>
+    <img src="/chefDan.png" alt="Chef Dano logo" class="logo" />
+    <h1>Chef <span>Dano’s</span> AI Kitchen</h1>
+    <p>Your private, no cloud, AI powered recipe laboratory</p>
+  </header>
 
-<main>
-  <div class="card">
-    <h2>Ingredients and Preferences</h2>
+  <main>
+    <div class="card">
+      <h2>Ingredients and Preferences</h2>
 
-    <form id="recipeForm">
-      <label>Ingredients on hand</label>
-      <textarea id="ingredients"></textarea>
+      <form id="recipeForm">
+        <label>Ingredients on hand</label>
+        <textarea id="ingredients" placeholder="Eggs, sausage, hollandaise"></textarea>
 
-      <div class="row">
-        <div>
-          <label>Dietary restrictions</label>
-          <textarea id="dietaryRestrictions"></textarea>
+        <div class="row">
+          <div>
+            <label>Dietary restrictions</label>
+            <textarea id="dietaryRestrictions" placeholder="None"></textarea>
+          </div>
+          <div>
+            <label>Taste preferences</label>
+            <textarea id="tastePreferences" placeholder="Spicy, bold"></textarea>
+          </div>
         </div>
-        <div>
-          <label>Taste preferences</label>
-          <textarea id="tastePreferences"></textarea>
+
+        <div class="row">
+          <div>
+            <label>Meal type</label>
+            <select id="mealType">
+              <option>Breakfast</option>
+              <option>Lunch</option>
+              <option selected>Dinner</option>
+            </select>
+          </div>
+          <div>
+            <label>AI model</label>
+            <select id="model">
+              <option selected>gemma2:2b</option>
+              <option>gemma2:latest</option>
+              <option>qwen2.5:3b</option>
+              <option>qwen2.5:7b</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div>
-          <label>Meal type</label>
-          <select id="mealType">
-            <option>Breakfast</option>
-            <option>Lunch</option>
-            <option selected>Dinner</option>
-          </select>
-        </div>
-        <div>
-          <label>AI model</label>
-          <select id="model">
-            <option selected>gemma2:2b</option>
-            <option>gemma2:latest</option>
-            <option>qwen2.5:3b</option>
-            <option>qwen2.5:7b</option>
-          </select>
-        </div>
-      </div>
+        <label>Number of servings</label>
+        <input type="number" id="servings" min="1" max="12" value="2" />
 
-      <label>Number of servings</label>
-      <input type="number" id="servings" min="1" max="12" value="2" />
-
-      <button id="btn" type="submit">Create Recipe</button>
-    </form>
-  </div>
-
-  <div class="card">
-    <h2>Chef’s Creation</h2>
-
-    <div id="spinner" style="display:none; text-align:center; padding:40px 0;">
-      <div class="loader"></div>
-      <div style="margin-top:12px; color:var(--muted);">
-        Chef Dano is thinking
-      </div>
+        <button id="btn" type="submit">Create Recipe</button>
+      </form>
     </div>
 
-    <div id="output" class="markdown">
-      <p style="color:var(--muted);">
-        Tell me what’s in your kitchen and I’ll take it from there.
-      </p>
+    <div class="card">
+      <h2>Chef’s Creation</h2>
+
+      <div id="spinner" style="display:none; text-align:center; padding:40px 0;">
+        <div class="loader"></div>
+        <div style="margin-top:12px; color:var(--muted);">
+          Chef Dano is thinking
+        </div>
+      </div>
+
+      <div id="output" class="markdown">
+        <p style="color:var(--muted);">
+          Tell me what’s in your kitchen and I’ll take it from there.
+        </p>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
 
-<footer>
-  Powered by your Raspberry Pi · Ollama · Open models · Zero cloud
-</footer>
+  <footer>
+    Powered by your Raspberry Pi · Ollama · Open models · Zero cloud
+  </footer>
 
-<script src="/marked.min.js"></script>
+  <script src="/marked.min.js"></script>
 
+  <script>
+    const form = document.getElementById("recipeForm");
+    const output = document.getElementById("output");
+    const btn = document.getElementById("btn");
+    const spinner = document.getElementById("spinner");
 
-<script>
-  const form = document.getElementById("recipeForm");
-  const output = document.getElementById("output");
-  const btn = document.getElementById("btn");
-  const spinner = document.getElementById("spinner");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+      const ingredients = document.getElementById("ingredients").value.trim();
+      const dietaryRestrictions = document.getElementById("dietaryRestrictions").value.trim();
+      const tastePreferences = document.getElementById("tastePreferences").value.trim();
+      const mealType = document.getElementById("mealType").value;
+      const model = document.getElementById("model").value;
+      const servings = document.getElementById("servings").value;
 
-    const ingredients = document.getElementById("ingredients").value.trim();
-    const dietaryRestrictions = document.getElementById("dietaryRestrictions").value.trim();
-    const tastePreferences = document.getElementById("tastePreferences").value.trim();
-    const mealType = document.getElementById("mealType").value;
-    const model = document.getElementById("model").value;
-    const servings = document.getElementById("servings").value;
+      if (!ingredients) {
+        output.innerHTML = "<p>Please tell me what ingredients you have.</p>";
+        return;
+      }
 
-    if (!ingredients) {
-      output.innerHTML = "<p>Please tell me what ingredients you have.</p>";
-      return;
-    }
+      btn.disabled = true;
+      btn.textContent = "Cooking";
+      output.style.display = "none";
+      spinner.style.display = "block";
 
-    btn.disabled = true;
-    btn.textContent = "Cooking";
-    output.style.opacity = "0.3";
-    spinner.style.display = "block";
+      try {
+        const r = await fetch("/recipe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ingredients,
+            dietaryRestrictions,
+            tastePreferences,
+            mealType,
+            servings,
+            model
+          })
+        });
 
-    try {
-      const r = await fetch("/recipe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ingredients,
-          dietaryRestrictions,
-          tastePreferences,
-          mealType,
-          servings,
-          model
-        })
-      });
-
-      const data = await r.json();
-      output.innerHTML = data.recipe
-        ? marked.parse(data.recipe)
-        : "<p>No recipe returned.</p>";
-    } catch {
-      output.innerHTML = "<p>Something went wrong. Try again.</p>";
-    } finally {
-      spinner.style.display = "none";
-      output.style.opacity = "1";
-      btn.disabled = false;
-      btn.textContent = "Create Recipe";
-    }
-  });
-</script>
+        const data = await r.json();
+        output.innerHTML = data.recipe
+          ? marked.parse(data.recipe)
+          : "<p>No recipe returned.</p>";
+      } catch {
+        output.innerHTML = "<p>Something went wrong. Try again.</p>";
+      } finally {
+        spinner.style.display = "none";
+        output.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Create Recipe";
+      }
+    });
+  </script>
 </body>
 </html>
