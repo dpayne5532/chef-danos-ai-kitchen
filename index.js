@@ -10,6 +10,33 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+/**
+ * HEALTH CHECK
+ * Confirms Ollama is reachable before we claim the app is healthy
+ */
+app.get("/health", async (req, res) => {
+  try {
+    const r = await fetch("http://localhost:11434/api/tags", { timeout: 2000 });
+    if (!r.ok) throw new Error("Ollama not ready");
+
+    const data = await r.json();
+
+    res.json({
+      status: "ok",
+      ollama: "ready",
+      models: (data.models || []).map(m => m.name)
+    });
+  } catch {
+    res.status(503).json({
+      status: "degraded",
+      ollama: "unavailable"
+    });
+  }
+});
+
+/**
+ * PROMPT BUILDER
+ */
 function buildPrompt({
   ingredients,
   dietaryRestrictions,
@@ -49,6 +76,9 @@ FORMAT:
 `.trim();
 }
 
+/**
+ * MAIN RECIPE ENDPOINT
+ */
 app.post("/recipe", async (req, res) => {
   const ingredients = String(req.body.ingredients || "").trim();
   const dietaryRestrictions = String(req.body.dietaryRestrictions || "").trim();
@@ -59,6 +89,16 @@ app.post("/recipe", async (req, res) => {
 
   if (!ingredients) {
     return res.status(400).json({ error: "Ingredients is required." });
+  }
+
+  // FAST FAIL IF OLLAMA IS DOWN
+  try {
+    const check = await fetch("http://localhost:11434/api/tags", { timeout: 2000 });
+    if (!check.ok) throw new Error();
+  } catch {
+    return res.status(503).json({
+      error: "AI engine is warming up or unavailable. Please try again shortly."
+    });
   }
 
   const prompt = buildPrompt({
@@ -102,5 +142,5 @@ app.post("/recipe", async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Chef Dano’s AI Kitchen running at http://localhost:3000");
+  console.log("Chef Dano’s AI Kitchen running on port 3000");
 });
